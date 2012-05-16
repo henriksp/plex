@@ -679,7 +679,7 @@ bool CWinSystemWin32::Show(bool raise)
   return true;
 }
 
-bool CWinSystemWin32::UpdateDisplayBlanking()
+void CWinSystemWin32::UpdateDisplayBlanking()
 {
   m_bBlankOtherDisplay = g_guiSettings.GetBool("videoscreen.blankdisplays") && m_bFullScreen;
   BlankNonActiveMonitors(m_bBlankOtherDisplay);
