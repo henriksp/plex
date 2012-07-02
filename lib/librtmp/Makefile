@@ -39,9 +39,9 @@ $(LIBRTMP): librtmp/Makefile
 	make SYS=$(SYS) prefix=$(PREFIX_PATH) XCFLAGS="$(XCFLAGS)" XLDFLAGS="$(XLDFLAGS)" -C librtmp/librtmp
 
 librtmp/Makefile:
-	svn export svn://svn.mplayerhq.hu/rtmpdump/tags/rel-2.3 librtmp
+	git clone git://git.ffmpeg.org/rtmpdump librtmp
 ifeq ($(OSTYPE),Darwin)
-	cd librtmp; patch -p1 < ../make_shared_lib_for_darwin-tag2.3.patch
+	cd librtmp; patch -p1 < ../make_shared_lib_for_darwin-tag2.4.patch
 endif
 
 install:
