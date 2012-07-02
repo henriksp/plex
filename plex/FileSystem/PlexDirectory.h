@@ -37,7 +37,7 @@ class CPlexDirectory : public IDirectory,
                        public CThread
 {
  public:
-  CPlexDirectory(bool parseResults, bool displayDialog, bool replaceLocalhost);
+  CPlexDirectory(bool parseResults, bool displayDialog, bool replaceLocalhost, int timeout=300);
   CPlexDirectory(bool parseResults=true, bool displayDialog=true);
   virtual ~CPlexDirectory();
   

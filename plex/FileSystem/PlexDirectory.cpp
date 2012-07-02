@@ -61,14 +61,14 @@ CPlexDirectory::CPlexDirectory(bool parseResults, bool displayDialog)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-CPlexDirectory::CPlexDirectory(bool parseResults, bool displayDialog, bool replaceLocalhost)
+CPlexDirectory::CPlexDirectory(bool parseResults, bool displayDialog, bool replaceLocalhost, int timeout)
   : m_bStop(false)
   , m_bSuccess(true)
   , m_bParseResults(parseResults)
   , m_bReplaceLocalhost(replaceLocalhost)
   , m_dirCacheType(DIR_CACHE_ALWAYS)
 {
-  m_timeout = 300;
+  m_timeout = timeout;
 
   if (displayDialog == false)
     m_allowPrompting = false;
