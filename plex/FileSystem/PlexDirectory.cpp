@@ -1808,6 +1808,10 @@ void CPlexDirectory::ParseTags(TiXmlElement* element, const CFileItemPtr& item, 
   }
 }
 
+#ifdef _WIN32
+extern string Cocoa_GetLanguage();
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void CPlexDirectory::Process()
 {
@@ -1821,18 +1825,18 @@ void CPlexDirectory::Process()
   }
 
   // Set request headers.
-#ifdef __APPLE__
   m_http.SetRequestHeader("X-Plex-Version", Cocoa_GetAppVersion());
-#pragma warning FIX platform specific code.
+  m_http.SetRequestHeader("X-Plex-Client-Identifier", g_guiSettings.GetString("system.uuid"));
+
   // Only send headers if we're NOT going to the node.
   if (url.Get().find("http://node.plexapp.com") == -1 && url.Get().find("http://nodedev.plexapp.com") == -1)
-    m_http.SetRequestHeader("X-Plex-Language", Cocoa_GetLanguage()); //FIXME
+    m_http.SetRequestHeader("X-Plex-Language", Cocoa_GetLanguage());
+
+#ifdef __APPLE__
   m_http.SetRequestHeader("X-Plex-Client-Platform", "MacOSX");
 #elif defined (_WIN32)
   m_http.SetRequestHeader("X-Plex-Client-Platform", "Windows");
-#endif
-  
-  m_http.SetRequestHeader("X-Plex-Client-Identifier", g_guiSettings.GetString("system.uuid"));
+#endif  
   
   // Build a description of what we support.
   CStdString protocols = "protocols=shoutcast,webkit,http-video;videoDecoders=h264{profile:high&resolution:1080&level:51};audioDecoders=mp3,aac";
