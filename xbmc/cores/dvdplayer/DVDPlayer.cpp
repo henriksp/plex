@@ -1165,13 +1165,17 @@ CStdString CDVDPlayer::TranscodeURL(CStdString& stopURL, const CStdString& url, 
 void CDVDPlayer::Process()
 {
   CStdString stopURL;
+  bool usingLocalPath = false;
   
   // See if we can find the file locally.
   if (m_item.IsRemotePlexMediaServerLibrary() == false)
   {
     string localPath = m_item.GetProperty("localPath");
     if (localPath.size() > 0 && CFile::Exists(localPath))
+    {
       m_item.m_strPath = localPath;
+      usingLocalPath = true;
+    }
   }
 
   // See if we need to resolve an indirect item.
@@ -1255,7 +1259,7 @@ void CDVDPlayer::Process()
       transcode = true;
       quality = g_guiSettings.GetInt("myplex.remoteplexquality"); 
     }
-    else if (g_guiSettings.GetBool("plexmediaserver.forcelocaltranscode") == true && Cocoa_IsHostLocal(mediaURL.GetHostName()) == false)
+    else if (g_guiSettings.GetBool("plexmediaserver.forcelocaltranscode") == true && usingLocalPath == false && Cocoa_IsHostLocal(mediaURL.GetHostName()) == false)
     {
       // This is a forced local transcode.
       transcode = true;
