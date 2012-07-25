@@ -127,6 +127,9 @@ bool CLocalizeStrings::Load(const CStdString& strFileName, const CStdString& str
   if (bLoadFallback)
     LoadXML(strFallbackFileName, encoding);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-source-encoding"
+  
   // fill in the constant strings
   m_strings[20022] = "";
   m_strings[20027] = ToUTF8(encoding, "°F");
@@ -137,7 +140,9 @@ bool CLocalizeStrings::Load(const CStdString& strFileName, const CStdString& str
   m_strings[20032] = ToUTF8(encoding, "°Rø");
   m_strings[20033] = ToUTF8(encoding, "°De");
   m_strings[20034] = ToUTF8(encoding, "°N");
-
+  
+#pragma diagnostic pop
+  
   m_strings[20200] = ToUTF8(encoding, "km/h");
   m_strings[20201] = ToUTF8(encoding, "m/min");
   m_strings[20202] = ToUTF8(encoding, "m/s");
