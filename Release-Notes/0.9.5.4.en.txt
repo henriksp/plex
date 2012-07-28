@@ -1,0 +1,7 @@
+- NEW: Update RTMP to 2.4
+- FIX: Fix for connectivity issues when PMS isn't running locally (thanks to elwertk).
+- FIX: Playback of interlaced H.264 content was broken (thanks to elwertk).
+- FIX: Use the same user agent as earlier in Plex/Nine.
+- FIX: Add the Plex language and version headers.
+- FIX: When forced transcode was enabled, playback could fail for local files.
+- FIX: Support for chained indirects in channels.
