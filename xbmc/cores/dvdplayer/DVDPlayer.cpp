@@ -996,6 +996,11 @@ class PlexAsyncUrlResolver
     return m_finalPath;
   }
   
+  CFileItem& GetFinalItem()
+  {
+    return m_finalItem;
+  }
+  
   bool IsIndirect() const
   {
     return m_indirect;
@@ -1017,6 +1022,7 @@ class PlexAsyncUrlResolver
   {
     CStdString body;
     CStdString url = m_item.m_strPath;
+    CLog::Log(LOGNOTICE, "Resolving indirect URL: %s", url.c_str());
     
     // See if we need to send data to resolve the indirect.
     if (m_item.HasProperty("postURL"))
@@ -1024,11 +1030,13 @@ class PlexAsyncUrlResolver
       // Go get the page, clearing cookies (b/c we want to get all needed ones back in the headers.
       // FIXME, we should look at postHeaders as well.
       //
+      CLog::Log(LOGNOTICE, "Found a POST URL, going to fetch %s", m_item.GetProperty("postURL").c_str());
       CFileCurl curl;
       curl.ClearCookies();
       if (curl.Get(m_item.GetProperty("postURL"), body))
       {
         // Get the headers and prepend them to the request.
+        CLog::Log(LOGNOTICE, "POST URL was retrieved successfully, processing.");
         CHttpHeader header = curl.GetHttpHeader();
         body = header.GetHeaders() + body;
         
@@ -1060,7 +1068,10 @@ class PlexAsyncUrlResolver
             
             // See if we ran smack into another indirect item.
             if (finalFile->GetPropertyInt("indirect") == 1)
+            {
               m_indirect = true;
+              m_finalItem = *finalFile.get();
+            }
             
             g_application.CurrentFileItem().m_strPath = finalFile->m_strPath;
             g_application.CurrentFileItem().SetProperty("httpCookies", finalFile->GetProperty("httpCookies"));
@@ -1087,6 +1098,7 @@ class PlexAsyncUrlResolver
   bool       m_bSuccess;
   bool       m_bStop;
   CStdString m_finalPath;
+  CFileItem  m_finalItem;
   bool       m_indirect;
   CFileItem  m_item;
   PlexAsyncUrlResolverPtr m_me;
@@ -1190,10 +1202,12 @@ void CDVDPlayer::Process()
 
   // See if we need to resolve an indirect item.
   bool isIndirect = (m_item.GetPropertyInt("indirect") == 1);
+  CFileItem item = m_item;
+  
   while (isIndirect)
   {
     // Spin up async thread.
-    PlexAsyncUrlResolverPtr resolver = PlexAsyncUrlResolver::Resolve(m_item);
+    PlexAsyncUrlResolverPtr resolver = PlexAsyncUrlResolver::Resolve(item);
 
     // Wait for it to complete.
     for (bool done = false; done == false && m_bAbortRequest == false; )
@@ -1210,6 +1224,12 @@ void CDVDPlayer::Process()
     // Suck the data out of the resolver and see if it's indirect as well.
     m_item.m_strPath = resolver->GetFinalPath();
     isIndirect = resolver->IsIndirect();
+    
+    // If we ran into an indirect, copy the full item, since it might have
+    // POST URL and other goodies.
+    //
+    if (isIndirect)
+      item = resolver->GetFinalItem();
   }    
 
   m_mimetype = m_item.GetMimeType();
