@@ -9,3 +9,6 @@ rm media/*
 rm -rf media-lite
 mv Textures.xbt media/
 rm -rf .git
+
+popd
+codesign --force --sign "Developer ID Application: Plex Inc." -r requirement.bin "build/Release/Plex.app"
