@@ -774,7 +774,7 @@ __int64 PAPlayer::GetTotalTime64()
 {
   __int64 total = m_decoder[m_currentDecoder].TotalTime();
   if (m_currentFile->m_lEndOffset)
-    total = m_currentFile->m_lEndOffset * 1000 / 75;
+    total = m_currentFile->m_lEndOffset * 1000;
   if (m_currentFile->m_lStartOffset)
     total -= m_currentFile->m_lStartOffset * 1000 / 75;
   return total;
