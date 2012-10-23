@@ -4634,6 +4634,13 @@ bool CApplication::OnMessage(CGUIMessage& message)
 
   case GUI_MSG_QUEUE_NEXT_ITEM:
     {
+     // check if playing a stack, in that case don't
+     // queue anything (due no proper handling for stacks)
+      if (m_itemCurrentFile->IsStack() && m_currentStack->Size() > 0 && m_currentStackPosition < m_currentStack->Size() - 1)
+      {
+        if (m_pPlayer) m_pPlayer->OnNothingToQueueNotify();
+        return true;
+      }
       // Check to see if our playlist player has a new item for us,
       // and if so, we check whether our current player wants the file
       int iNext = g_playlistPlayer.GetNextSong();
