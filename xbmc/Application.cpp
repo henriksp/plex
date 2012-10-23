@@ -4652,6 +4652,11 @@ bool CApplication::OnMessage(CGUIMessage& message)
       }
       // ok, grab the next song
       CFileItemPtr item = playlist[iNext];
+      if (item->IsStack()) {
+          // Don't queue anything since it is not supported
+          if (m_pPlayer) m_pPlayer->OnNothingToQueueNotify();
+          return true;
+      }
       // ok - send the file to the player if it wants it
       if (m_pPlayer && m_pPlayer->QueueNextFile(*item))
       { // player wants the next file
